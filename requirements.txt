@@ -1,1 +1,3 @@
-github2
+github2==0.2.0
+feedgenerator==1.2.1
+opster==2.1
