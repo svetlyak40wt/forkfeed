@@ -1,4 +1,4 @@
-#!env/bin/python
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from __future__ import with_statement
 
@@ -14,7 +14,13 @@ def main(
         output_filename=('o', '%(username)s-%(repository)s.xml', 'output filename'),
     ):
     """Utility to build Atom feed for new commits from your projects' forks on the GitHub."""
+
+    logging.basicConfig(
+        format='%(asctime)s %(levelname)s %(message)s',
+        level=logging.DEBUG,
+    )
     log = logging.getLogger()
+
     gh = Github()
 
     if '/' in repository_or_username:
@@ -59,9 +65,6 @@ def main(
         with open(output_filename % locals(), 'w') as f:
             feed.write(f, 'utf-8')
 
+
 if __name__ == '__main__':
-    logging.basicConfig(
-        format='%(asctime)s %(levelname)s %(message)s',
-        level=logging.DEBUG,
-    )
     main()

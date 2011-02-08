@@ -7,7 +7,11 @@ setup(
     author='Alexander Artemenko',
     author_email='svetlyak.40wt@gmail.com',
 
-    scripts=['forkfeed.py'],
+    entry_points={
+        'console_scripts': [
+            'forkfeed = forkfeed:main',
+        ]
+    },
     install_requires=[
         'github2>=0.2.0',
         'feedgenerator>=1.2.1',
