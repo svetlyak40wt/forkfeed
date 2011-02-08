@@ -2,16 +2,11 @@ from setuptools import setup
 
 setup(
     name='forkfeed',
-    version='0.1.0',
+    version='0.1.1',
     description='Utility do build atom feeds for all commits in all forks of your projects on GitHub.',
     author='Alexander Artemenko',
     author_email='svetlyak.40wt@gmail.com',
-
-    entry_points={
-        'console_scripts': [
-            'forkfeed = forkfeed:main',
-        ]
-    },
+    scripts=['forkfeed'],
     install_requires=[
         'github2>=0.2.0',
         'feedgenerator>=1.2.1',
