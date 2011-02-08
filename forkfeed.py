@@ -54,12 +54,21 @@ def main(
             for commit in reversed(fork_commits):
                 if commit.committed_date > last_commit_date:
                     short_commit_message = commit.message.split('\n', 1)[0]
-                    log.debug('%s %s %s', fork_repname, commit.committed_date, short_commit_message)
+                    log.debug(
+                        u'%s %s %s %s',
+                        fork_repname,
+                        commit.committed_date,
+                        commit.author['login'],
+                        short_commit_message
+                    )
 
                     feed.add_item(
-                        title=fork_repname,
+                        title=fork_repname + ' ' + short_commit_message,
                         link=u'http://github.com/%s/commit/%s' % (fork_repname, commit.id),
-                        description=short_commit_message,
+                        description=commit.message,
+                        author_name=commit.author['name'],
+                        author_email=commit.author['email'],
+                        author_link=u'http://github.com/' + commit.author['login'],
                     )
 
         with open(output_filename % locals(), 'w') as f:
