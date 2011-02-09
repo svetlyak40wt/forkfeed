@@ -7,11 +7,11 @@ reporter: Alexander Artemenko <svetlyak.40wt@gmail.com>
 severity: minor
 
 
-status: fixed
+status: open
 
 
-summary: Create single feed for all projects (optional).
+summary: Don\'t fetch commits from checked project.
 
 
-time: Wed, 09 Feb 2011 07:42:50 +0000
+time: Wed, 09 Feb 2011 08:14:36 +0000
 
