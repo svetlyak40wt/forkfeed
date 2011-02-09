@@ -9,6 +9,40 @@ import feedgenerator
 from opster import command
 from github2.client import Github
 
+def save_feed(filename, title, link, description, items):
+    log = logging.getLogger()
+
+    feed = feedgenerator.Atom1Feed(
+        title=title,
+        link=link,
+        description=description,
+        language=u'en',
+    )
+
+    for dt, fork_repname, commit in items:
+        short_commit_message = commit.message.split('\n', 1)[0]
+        log.debug(
+            u'%s %s %s %s',
+            fork_repname,
+            commit.committed_date,
+            commit.author['login'],
+            short_commit_message
+        )
+
+        feed.add_item(
+            title=fork_repname + ' ' + short_commit_message,
+            link=u'http://github.com' + commit.url,
+            description=commit.message,
+            pubdate=commit.committed_date,
+            author_name=commit.author['name'],
+            author_email=commit.author['email'],
+            author_link=u'http://github.com/' + commit.author['login'],
+        )
+
+    with open(filename, 'w') as f:
+        feed.write(f, 'utf-8')
+
+
 @command(usage='%name (username or username/repository) [-o output.xml]')
 def main(
         repository_or_username,
@@ -54,35 +88,13 @@ def main(
                         commit.author['login'] != username:
                     bisect.insort(feed_items, (commit.committed_date, fork_repname, commit))
 
-        feed = feedgenerator.Atom1Feed(
+        save_feed(
+            filename=output_filename % locals(),
             title=u'%s forks' % full_repname,
             link=u'http://github.com/%s' % full_repname,
             description=u'Commits from forks of %s repository at GitHub.' % full_repname,
-            language=u'en',
+            items=feed_items[-1:-max_feed_length-1:-1],
         )
-
-        for dt, fork_repname, commit in feed_items[-1:-max_feed_length-1:-1]:
-            short_commit_message = commit.message.split('\n', 1)[0]
-            log.debug(
-                u'%s %s %s %s',
-                fork_repname,
-                commit.committed_date,
-                commit.author['login'],
-                short_commit_message
-            )
-
-            feed.add_item(
-                title=fork_repname + ' ' + short_commit_message,
-                link=u'http://github.com' + commit.url,
-                description=commit.message,
-                pubdate=commit.committed_date,
-                author_name=commit.author['name'],
-                author_email=commit.author['email'],
-                author_link=u'http://github.com/' + commit.author['login'],
-            )
-
-        with open(output_filename % locals(), 'w') as f:
-            feed.write(f, 'utf-8')
 
 
 if __name__ == '__main__':
