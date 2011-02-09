@@ -82,14 +82,15 @@ def main(
         for fork in gh.repos.network(full_repname):
             fork_repname = '%(owner)s/%(name)s' % fork
 
-            log.info('Fetching commits from %s' % fork_repname)
-            fork_commits = gh.commits.list(fork_repname, 'master')
+            if fork_repname != full_repname:
+                log.info('Fetching commits from %s' % fork_repname)
+                fork_commits = gh.commits.list(fork_repname, 'master')
 
-            for commit in fork_commits:
-                # ignore old commits and commits from myself
-                if commit.committed_date > last_commit_date and \
-                        commit.author['login'] != username:
-                    bisect.insort(feed_items, (commit.committed_date, fork_repname, commit))
+                for commit in fork_commits:
+                    # ignore old commits and commits from myself
+                    if commit.committed_date > last_commit_date and \
+                            commit.author['login'] != username:
+                        bisect.insort(feed_items, (commit.committed_date, fork_repname, commit))
 
         if separate_feeds:
             # save feed for this particular project

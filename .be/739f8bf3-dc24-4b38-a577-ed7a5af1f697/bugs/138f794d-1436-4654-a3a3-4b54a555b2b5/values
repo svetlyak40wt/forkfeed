@@ -7,7 +7,7 @@ reporter: Alexander Artemenko <svetlyak.40wt@gmail.com>
 severity: minor
 
 
-status: open
+status: closed
 
 
 summary: Don\'t fetch commits from checked project.
