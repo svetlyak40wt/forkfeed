@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import with_statement
 
+import bisect
 import logging
 import feedgenerator
 
@@ -12,6 +13,7 @@ from github2.client import Github
 def main(
         repository_or_username,
         output_filename=('o', '%(username)s-%(repository)s.xml', 'output filename'),
+        max_feed_length=('l', 100, 'max feed length'),
     ):
     """Utility to build Atom feed for new commits from your projects' forks on the GitHub."""
 
@@ -38,12 +40,7 @@ def main(
         commits = gh.commits.list(full_repname, 'master')
         last_commit_date = commits[0].committed_date
 
-        feed = feedgenerator.Atom1Feed(
-            title=u'%s forks' % full_repname,
-            link=u'http://github.com/%s' % full_repname,
-            description=u'Commits from forks of %s repository at GitHub.' % full_repname,
-            language=u'en',
-        )
+        feed_items = []
 
         for fork in gh.repos.network(full_repname):
             fork_repname = '%(owner)s/%(name)s' % fork
@@ -51,25 +48,35 @@ def main(
             log.info('Fetching commits from %s' % fork_repname)
             fork_commits = gh.commits.list(fork_repname, 'master')
 
-            for commit in reversed(fork_commits):
+            for commit in fork_commits:
                 if commit.committed_date > last_commit_date:
-                    short_commit_message = commit.message.split('\n', 1)[0]
-                    log.debug(
-                        u'%s %s %s %s',
-                        fork_repname,
-                        commit.committed_date,
-                        commit.author['login'],
-                        short_commit_message
-                    )
+                    bisect.insort(feed_items, (commit.committed_date, fork_repname, commit))
 
-                    feed.add_item(
-                        title=fork_repname + ' ' + short_commit_message,
-                        link=u'http://github.com/%s/commit/%s' % (fork_repname, commit.id),
-                        description=commit.message,
-                        author_name=commit.author['name'],
-                        author_email=commit.author['email'],
-                        author_link=u'http://github.com/' + commit.author['login'],
-                    )
+        feed = feedgenerator.Atom1Feed(
+            title=u'%s forks' % full_repname,
+            link=u'http://github.com/%s' % full_repname,
+            description=u'Commits from forks of %s repository at GitHub.' % full_repname,
+            language=u'en',
+        )
+
+        for dt, fork_repname, commit in feed_items[-1:-max_feed_length-1:-1]:
+            short_commit_message = commit.message.split('\n', 1)[0]
+            log.debug(
+                u'%s %s %s %s',
+                fork_repname,
+                commit.committed_date,
+                commit.author['login'],
+                short_commit_message
+            )
+
+            feed.add_item(
+                title=fork_repname + ' ' + short_commit_message,
+                link=u'http://github.com' + commit.url,
+                description=commit.message,
+                author_name=commit.author['name'],
+                author_email=commit.author['email'],
+                author_link=u'http://github.com/' + commit.author['login'],
+            )
 
         with open(output_filename % locals(), 'w') as f:
             feed.write(f, 'utf-8')
