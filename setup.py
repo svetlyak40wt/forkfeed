@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='forkfeed',
-    version='0.1.1',
+    version='0.1.2',
     description='Utility do build atom feeds for all commits in all forks of your projects on GitHub.',
     author='Alexander Artemenko',
     author_email='svetlyak.40wt@gmail.com',
