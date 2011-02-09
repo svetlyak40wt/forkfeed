@@ -23,6 +23,8 @@ This will create `svetlyak40wt-cony.xml` only.
 You can setup a cron to update feeds on a hourly basis and serve feeds
 using a webserver.
 
+Run `forkfeed --help` to get help on other options.
+
 Development
 -----------
 
