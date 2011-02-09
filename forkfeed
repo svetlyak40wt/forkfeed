@@ -49,7 +49,9 @@ def main(
             fork_commits = gh.commits.list(fork_repname, 'master')
 
             for commit in fork_commits:
-                if commit.committed_date > last_commit_date:
+                # ignore old commits and commits from myself
+                if commit.committed_date > last_commit_date and \
+                        commit.author['login'] != username:
                     bisect.insort(feed_items, (commit.committed_date, fork_repname, commit))
 
         feed = feedgenerator.Atom1Feed(
