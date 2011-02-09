@@ -7,7 +7,7 @@ reporter: Alexander Artemenko <svetlyak.40wt@gmail.com>
 severity: critical
 
 
-status: open
+status: fixed
 
 
 summary: Add pubdate for entries.

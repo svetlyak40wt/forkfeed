@@ -73,6 +73,7 @@ def main(
                 title=fork_repname + ' ' + short_commit_message,
                 link=u'http://github.com' + commit.url,
                 description=commit.message,
+                pubdate=commit.committed_date,
                 author_name=commit.author['name'],
                 author_email=commit.author['email'],
                 author_link=u'http://github.com/' + commit.author['login'],
