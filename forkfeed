@@ -49,6 +49,7 @@ def main(
         output_filename=('o', '%(username)s-%(repository)s.xml', 'output filename. '
                               'Omit "repository" name to save all projects in one file.'),
         max_feed_length=('l', 100, 'max feed length'),
+        ignore=('i', '', 'comma-separated repositories to ignore'),
     ):
     """Utility to build Atom feed for new commits from your projects' forks on the GitHub."""
 
@@ -67,7 +68,8 @@ def main(
         repositories = [repository]
     else:
         username = repository_or_username
-        repositories = [rep.name for rep in gh.repos.list(username)]
+        ignored = filter(None, (rep.strip() for rep in ignore.split(',')))
+        repositories = [rep.name for rep in gh.repos.list(username) if rep.name not in ignored]
 
     feed_items = []
 
