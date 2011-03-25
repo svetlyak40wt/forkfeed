@@ -90,9 +90,10 @@ def main(
                     fork_commits = gh.commits.list(fork_repname, branch)
 
                     for commit in fork_commits:
-                        # ignore old commits and commits from myself
+                        # ignore old commits, commits from myself and commits where author is not the fork owner
                         if commit.committed_date > last_commit_date and \
-                                commit.author['login'] != username:
+                                commit.author['login'] != username and \
+                                commit.author['login'] == fork['owner']:
                             bisect.insort(feed_items, (commit.committed_date, fork_repname, commit))
 
         if separate_feeds:
