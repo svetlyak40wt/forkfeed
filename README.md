@@ -38,3 +38,7 @@ Credits
 -------
 
 Alexander Artemenko (author)
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/svetlyak40wt/forkfeed/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
